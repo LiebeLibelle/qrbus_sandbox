@@ -18,6 +18,18 @@ function drawTable(template, data) {
   }).join("\t\t");
   
   console.log(header);
+  
+  var body = template.map(function(column) {
+    return column.key;
+    });
+  var row = body.map(function(item) {
+    return scoreboards[0].item;
+    });
+    
+  console.log(row);
+  console.log(scoreboards[0].id);
+  
+  
 }
 
 function ready() {
