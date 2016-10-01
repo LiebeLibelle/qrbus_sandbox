@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<title>Тетовая таблица</title>
-		<link href="bootstrap.min.css" rel="stylesheet"></link>
-		<link href="bootstrap-theme.min.css" rel="stylesheet"></link>
-		<link href="qr_style.css" rel="stylesheet"></link>
-		<script src="bootstrap.min.js"></script>		
+		<link href="bootstrap.min.css" rel="stylesheet"/>
+		<link href="bootstrap-theme.min.css" rel="stylesheet"/>
+		<link href="qr_style.css" rel="stylesheet"/>
+		<script src="jquery-3.1.1.min.js"></script>
+		<script src="bootstrap.min.js"></script>
+		<script src="qr_script.js"></script>
 	</head>
-	<body>
-		<table class="table table-bordered table-hover custom-table">
-		<caption>Тестовая таблица</caption>
+	<body onload="ready()">
+	<div class="panel panel-default">
+		<table id="scoreboard" class="table table-bordered table-hover">
+		<!-- <caption>Тестовая таблица</caption> -->
 			<thead class="theader">
 				<tr>
 					<th>ID платы</th>
@@ -21,7 +24,7 @@
 					<th>Интервал ротации</th>
 					<th>Версия прошивки</th>
 					<th>Аптайм</th>
-					<th>Статус датчика<br>крышки</th>
+					<th>Статус датчика<br>задней крышки</th>
 					<th>Температура</th>
 					<th>Напряжение, зарядка</th>
 					<th>Статус</th>
@@ -62,5 +65,7 @@
 				</tr>
 			</tbody>
 		</table>
+
+	</div>
 	</body>
 </html>
