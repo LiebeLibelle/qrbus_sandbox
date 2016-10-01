@@ -13,7 +13,11 @@ var tableTemplate = [
 ];
 
 function drawTable(template, data) {
+  var header = template.map(function(elem){
+    return elem.columnName;
+  }).join("\t\t");
   
+  console.log(header);
 }
 
 function ready() {
