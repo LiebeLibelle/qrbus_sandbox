@@ -33,7 +33,8 @@ function drawTable(template, data) {
   
 } */
 
-function ready() {
+$(function() {
+  console.log("ready");
   
   var table = document.createElement("table"); // вынес создание таблицы из цикла, её нужно создать всего один раз
   table.setAttribute("id", "scoreboards");
@@ -95,6 +96,6 @@ function ready() {
   var cell = row.insertCell(i);
   cell.innerHTML = "foo"; */
   
-  }
+  });
     
  
