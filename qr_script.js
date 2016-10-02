@@ -42,10 +42,15 @@ $(function() {
   
   document.getElementById("wrapper").appendChild(table); // добавляю не к body, а внутрь div'а
   
+  var theader = table.createTHead("theader");
+  theader.setAttribute("class", "theader");
+  
+  var tbody = table.appendChild(document.createElement("tbody"));
+  
   for(var rowIdx = 0; rowIdx< 4; rowIdx++) {
     var row = document.createElement("tr");
     // row.setAttribute("id", "myTr"); // необязательно каждый раз ставить атрибут, а потом по нему искать
-    table.appendChild(row); // достаточно просто сохранить в переменную созданную таблицу, и потом к ней обратиться
+    tbody.appendChild(row); // достаточно просто сохранить в переменную созданную таблицу, и потом к ней обратиться
     for(var cellIdx = 0; cellIdx < 4; cellIdx++) { // да-да, чтобы создать таблицу, нужно два цикла, вложенных друг в друга
       var cell = document.createElement("td");
       cell.innerHTML = "cell " + rowIdx + "x" + cellIdx; // вместо того, чтобы создавать textNode, можно просто написать туда текст
