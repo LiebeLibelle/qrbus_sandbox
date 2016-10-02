@@ -45,6 +45,15 @@ $(function() {
   var theader = table.createTHead("theader");
   theader.setAttribute("class", "theader");
   
+  var headerTr = document.createElement("tr");
+  theader.appendChild(headerTr);  
+  
+  for(var thIdx = 0; thIdx < 4; thIdx++) {
+    var th = document.createElement("th");
+     th.innerHTML = "th" + thIdx;
+     headerTr.appendChild(th);     
+    }
+  
   var tbody = table.appendChild(document.createElement("tbody"));
   
   for(var rowIdx = 0; rowIdx< 4; rowIdx++) {
@@ -61,7 +70,7 @@ $(function() {
       row.appendChild(cell);     
     }
   }
-
+  
   /*
   var scoreboard = document.getElementById("scoreboard");
   console.log(scoreboard);
