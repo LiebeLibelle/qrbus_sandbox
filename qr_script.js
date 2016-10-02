@@ -1,41 +1,57 @@
-/* var scoreboards = [
-  {id: 1, name: "Проспект просвещения", uptime: 134, temp: 23, voltage: 12.543},
-  {id: 2, name: "Светлановская площадь", uptime: 512, temp: 25, voltage: 13.089},
-  {id: 3, name: "Метро -- \"Пионерская\"", uptime: 98, temp: 19, voltage: 12.991}
+var scoreboards = [
+  {id: 1, name: "Проспект Просвещения", uptime: 134, temp: 23, voltage: 12.543},
+  {id: 2, name: "Светлановская Площадь", uptime: 512, temp: 25, voltage: 13.089},
+  {id: 3, name: "Метро \"Пионерская\"", uptime: 98, temp: 19, voltage: 12.991}
 ];
 
 var tableTemplate = [
   {columnName: "ID", key: "id"},
-  {columnName: "Название      остановки", key: "name"},
+  {columnName: "Название остановки", key: "name"},
   {columnName: "Время работы", key: "uptime"},
   {columnName: "Цвет", key: "color"},
   {columnName: "Температура", key: "temp"},
   {columnName: "Напряжение", key: "voltage"}
 ];
 
-function drawTable(template, data) {
-  var header = template.map(function(elem){
-    return elem.columnName;
-  }).join("\t\t|\t\t");
+function drawTableHeader(template) {
+  var row = document.createElement("tr");
   
-  console.log(header);
+  template.forEach(function(item) {
+    var th = document.createElement("th");
+    th.innerHTML = item.columnName;
+    row.appendChild(th);
+  });
   
-  data.forEach(function(item) {
-    var row = template.map(function(column) {
+  return row;
+}
+
+function drawTableBody(template, data) {
+  var tableBody = document.createElement("tbody");
+ 
+  data.forEach(function(item) { // data object
+    var row = document.createElement("tr");
+    template.map(function(column) { // template object
       if(item[column.key] !== undefined) {
         return item[column.key];
       } else {
         return "";
       }
+    }).forEach(function(item) {
+      var td = document.createElement("td");
+      td.innerHTML = item;
+      row.appendChild(td);
     });
-    console.log(row.join("\t\t|\t\t"));
+    tableBody.appendChild(row);
+    // console.log(row.join("\t\t|\t\t"));
   });
   
-} */
+  return tableBody;
+
+}
 
 $(function() {
   console.log("ready");
-  
+
   var table = document.createElement("table"); // вынес создание таблицы из цикла, её нужно создать всего один раз
   table.setAttribute("id", "scoreboards");
   table.setAttribute("class", "table table-bordered table-hover"); // попытка добавить красоту
@@ -45,22 +61,19 @@ $(function() {
   var theader = table.createTHead("theader");
   theader.setAttribute("class", "theader");
   
-  var headerTr = document.createElement("tr");
-  theader.appendChild(headerTr);  
+  var theaderRow = drawTableHeader(tableTemplate);
+  theader.appendChild(theaderRow);
   
-  for(var thIdx = 0; thIdx < 4; thIdx++) {
-    var th = document.createElement("th");
-     th.innerHTML = "th" + thIdx;
-     headerTr.appendChild(th);     
-    }
+  var tbody = drawTableBody(tableTemplate, scoreboards);
+  table.appendChild(tbody);
   
-  var tbody = table.appendChild(document.createElement("tbody"));
+
   
-  for(var rowIdx = 0; rowIdx< 4; rowIdx++) {
+  /* for(var rowIdx = 0; rowIdx< 4; rowIdx++) {
     var row = document.createElement("tr");
     // row.setAttribute("id", "myTr"); // необязательно каждый раз ставить атрибут, а потом по нему искать
     tbody.appendChild(row); // достаточно просто сохранить в переменную созданную таблицу, и потом к ней обратиться
-    for(var cellIdx = 0; cellIdx < 4; cellIdx++) { // да-да, чтобы создать таблицу, нужно два цикла, вложенных друг в друга
+    for(var cellIdx = 0; cellIdx < 6; cellIdx++) { // да-да, чтобы создать таблицу, нужно два цикла, вложенных друг в друга
       var cell = document.createElement("td");
       cell.innerHTML = "cell " + rowIdx + "x" + cellIdx; // вместо того, чтобы создавать textNode, можно просто написать туда текст
       // var t = document.createTextNode("cell");
@@ -69,6 +82,7 @@ $(function() {
       // та же история, что и с таблицей -- сохранили переменную row, и добавляем к ней ячейки, а не ищем каждый раз
       row.appendChild(cell);     
     }
+    
   }
   
   /*
