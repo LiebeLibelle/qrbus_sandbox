@@ -35,20 +35,25 @@ function drawTable(template, data) {
 
 function ready() {
   
+  var table = document.createElement("table"); // вынес создание таблицы из цикла, её нужно создать всего один раз
+  table.setAttribute("id", "scoreboards");
+  table.setAttribute("class", "table table-bordered table-hover"); // попытка добавить красоту
   
-  for(var i = 0; i < 4; i++) {
-    var x = document.createElement("TABLE");
-    x.setAttribute("id", "myTable");
-    document.body.appendChild(x);
-
-    var y = document.createElement("TR");
-    y.setAttribute("id", "myTr");
-    document.getElementById("myTable").appendChild(y);
-
-    var z = document.createElement("TD");
-    var t = document.createTextNode("cell");
-    z.appendChild(t);
-    document.getElementById("myTr").appendChild(z);
+  document.getElementById("wrapper").appendChild(table); // добавляю не к body, а внутрь div'а
+  
+  for(var rowIdx = 0; rowIdx< 4; rowIdx++) {
+    var row = document.createElement("tr");
+    // row.setAttribute("id", "myTr"); // необязательно каждый раз ставить атрибут, а потом по нему искать
+    table.appendChild(row); // достаточно просто сохранить в переменную созданную таблицу, и потом к ней обратиться
+    for(var cellIdx = 0; cellIdx < 4; cellIdx++) { // да-да, чтобы создать таблицу, нужно два цикла, вложенных друг в друга
+      var cell = document.createElement("td");
+      cell.innerHTML = "cell " + rowIdx + "x" + cellIdx; // вместо того, чтобы создавать textNode, можно просто написать туда текст
+      // var t = document.createTextNode("cell");
+      // cell.appendChild(t);
+      
+      // та же история, что и с таблицей -- сохранили переменную row, и добавляем к ней ячейки, а не ищем каждый раз
+      row.appendChild(cell);     
+    }
   }
 
   /*
