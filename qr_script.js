@@ -1,31 +1,31 @@
-var scoreboards = [
-  {id: 1, name: "Проспект Просвещения", uptime: 134, temp: 23, voltage: 12.543},
-  {id: 2, name: "Светлановская Площадь", uptime: 512, temp: 25, voltage: 13.089},
-  {id: 3, name: "Метро \"Пионерская\"", uptime: 98, temp: 19, voltage: 12.991}
-];
+/* =========== VIEW ============== */
+function ScoreboardView(model) {
+  this.model = model;
+  this.tableTemplate = [
+    {columnName: "ID", key: "id"},
+    {columnName: "Название остановки", key: "name"},
+    {columnName: "Время работы", key: "uptime"},
+    {columnName: "Цвет", key: "color"},
+    {columnName: "Температура", key: "temp"},
+    {columnName: "Напряжение", key: "voltage"}
+  ];
+}
 
-var tableTemplate = [
-  {columnName: "ID", key: "id"},
-  {columnName: "Название остановки", key: "name"},
-  {columnName: "Время работы", key: "uptime"},
-  {columnName: "Цвет", key: "color"},
-  {columnName: "Температура", key: "temp"},
-  {columnName: "Напряжение", key: "voltage"}
-];
-
-function drawTableHeader(template) {
+ScoreboardView.drawTableHeader = function (template) {
   var row = document.createElement("tr");
   
   template.forEach(function(item) {
     var th = document.createElement("th");
     th.innerHTML = item.columnName;
+    th.setAttribute("id", item.key);
+    th.setAttribute("onclick", 'sortHandler("' + item.key + '")');
     row.appendChild(th);
   });
   
   return row;
 }
 
-function drawTableBody(template, data) {
+ScoreboardView.drawTableBody = function(template, data) {
   var tableBody = document.createElement("tbody");
  
   data.forEach(function(item) { // data object
@@ -49,96 +49,86 @@ function drawTableBody(template, data) {
 
 }
 
-$(function() {
-  console.log("ready");
+ScoreboardView.prototype.render = function () {
+  console.log("render");
+  document.body.innerHTML = "";
   
-
-  var table = document.createElement("table"); // вынес создание таблицы из цикла, её нужно создать всего один раз
+  var wrapper = document.createElement("div");
+  wrapper.setAttribute("id", "wrapper");
+  wrapper.setAttribute("style", "container");
+  document.body.appendChild(wrapper);
+  
+  
+  var table = document.createElement("table");
   table.setAttribute("id", "scoreboards");
-  table.setAttribute("class", "table table-bordered table-hover"); // попытка добавить красоту
+  table.setAttribute("class", "table table-bordered table-hover");
   
-  document.getElementById("wrapper").appendChild(table); // добавляю не к body, а внутрь div'а
+  wrapper.appendChild(table);
   
   var theader = table.createTHead("theader");
   theader.setAttribute("class", "theader");
   
-  var theaderRow = drawTableHeader(tableTemplate);
+  var theaderRow = ScoreboardView.drawTableHeader(this.tableTemplate);
   theader.appendChild(theaderRow);
   
-  var tbody = drawTableBody(tableTemplate, scoreboards);
+  var tbody = ScoreboardView.drawTableBody(this.tableTemplate, this.model);
   table.appendChild(tbody);
-  
-// паттерн "наблюдатель"
-
-// хоть какая-то сортировка...
-
-var column = "voltage";
-
-function anyColumnSort(a, b) {
-  return a[column] - b[column];
 }
 
-console.log (scoreboards);
+/* ================= MODEL ============== */
+Model = Array;
+Model.prototype.flag = true;
 
-console.log (scoreboards.sort(anyColumnSort));
-
-
-  
-  /* for(var rowIdx = 0; rowIdx< 4; rowIdx++) {
-    var row = document.createElement("tr");
-    // row.setAttribute("id", "myTr"); // необязательно каждый раз ставить атрибут, а потом по нему искать
-    tbody.appendChild(row); // достаточно просто сохранить в переменную созданную таблицу, и потом к ней обратиться
-    for(var cellIdx = 0; cellIdx < 6; cellIdx++) { // да-да, чтобы создать таблицу, нужно два цикла, вложенных друг в друга
-      var cell = document.createElement("td");
-      cell.innerHTML = "cell " + rowIdx + "x" + cellIdx; // вместо того, чтобы создавать textNode, можно просто написать туда текст
-      // var t = document.createTextNode("cell");
-      // cell.appendChild(t);
+Model.prototype.emit = function (eventType, eventMessage) {
+  console.log("handle message", eventType);
+  switch(eventType) {
+    case "makeSort":
+      var column = eventMessage;
+      console.log("column", column, "has been sorted");
       
-      // та же история, что и с таблицей -- сохранили переменную row, и добавляем к ней ячейки, а не ищем каждый раз
-      row.appendChild(cell);     
-    }
-    
+      /* ===== BUSINESS LOGIC ====== */
+      if(this.column == undefined) {
+        orderAscending = false;
+        console.log ("unsorted", this.column, orderAscending);
+      } else if(this.column == column) {
+        orderAscending = !this.orderAscending;
+        console.log ("second click", this.column, orderAscending);
+      } else {
+        orderAscending = false;
+        console.log ("first click", this.column, orderAscending);
+      }
+      
+      this.sortByColumn(column, orderAscending);
+      this.column = column;
+      this.orderAscending = orderAscending;
+    break;
+    default:
+      console.warn("unhandled event", eventType);
   }
-  
-  /*
-  var scoreboard = document.getElementById("scoreboard");
-  console.log(scoreboard);
-  var row = scoreboard.insertRow(-1);
-  for(var i = 0; i < 13;i++) {
-    var cell = row.insertCell(i);
-    cell.innerHTML = "foo";
-  }
-  
-  drawTable(tableTemplate, scoreboards); */
-  
+}
 
-  /* var testTable = document.createElement("TABLE");
-  testTable.setAttribute("id", "myTable");
-  document.body.appendChild(testTable);
-  
-  var scoreboard = document.getElementById("myTable");
-  
-  var theader = document.createElement("TH");
-  /* var t = document.createTextNode("table header cell");
-  theader.setAttribute("id", "myTheader");
-  scoreboard.appendChild(theader);*/
-  
-  /* for(var i = 0; i < 4; i++) {
-    var cell = theader.insertCell(i);
-    cell.innerHTML = "foo";
-    } */
-
-    
-    
-  /* var scoreboard = document.getElementById("myTable");
-  console.log(scoreboard);
-  
-  
-  var row = scoreboard.insertRow(-1);
-  for(var i = 0; i < 13;i++) {
-  var cell = row.insertCell(i);
-  cell.innerHTML = "foo"; */
-  
+Model.prototype.sortByColumn = function(column, orderAscending) {
+  return this.sort(function(a, b) {
+    return (a[column] - b[column]) * (orderAscending ? -1 : 1); 
   });
-    
+}
+
+var scoreboards = new Model(
+  {id: 1, name: "Проспект Просвещения", uptime: 134, temp: 23, voltage: 12.543},
+  {id: 2, name: "Светлановская Площадь", uptime: 512, temp: 25, voltage: 13.089},
+  {id: 3, name: "Метро \"Пионерская\"", uptime: 98, temp: 19, voltage: 12.991}
+);
+
+scoreboardView = new ScoreboardView(scoreboards);
+
+function sortHandler(column) {
+  console.log("handle sort of column", column);
+  scoreboards.emit("makeSort", column);
+  scoreboardView.render();
+}
+
+$(function() {
+  console.log("ready");
+  scoreboardView.render();
+});
  
