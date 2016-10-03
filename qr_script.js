@@ -51,6 +51,7 @@ function drawTableBody(template, data) {
 
 $(function() {
   console.log("ready");
+  
 
   var table = document.createElement("table"); // вынес создание таблицы из цикла, её нужно создать всего один раз
   table.setAttribute("id", "scoreboards");
@@ -71,31 +72,17 @@ $(function() {
 
 // хоть какая-то сортировка...
 
+var column = "voltage";
 
-function columnSort(a, b) {
-  return a - b;
+function anyColumnSort(a, b) {
+  return a[column] - b[column];
 }
 
+console.log (scoreboards);
 
-var column = scoreboards.map(function(item) { 
-  return item.uptime;
-});
-
-console.log (column);
-
-console.log (column.sort(columnSort));
+console.log (scoreboards.sort(anyColumnSort));
 
 
-
-
-  
-  
-  
-  
-  
-  
-  
-  
   
   /* for(var rowIdx = 0; rowIdx< 4; rowIdx++) {
     var row = document.createElement("tr");
