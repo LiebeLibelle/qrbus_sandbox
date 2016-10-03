@@ -67,7 +67,35 @@ $(function() {
   var tbody = drawTableBody(tableTemplate, scoreboards);
   table.appendChild(tbody);
   
+// паттерн "наблюдатель"
 
+// хоть какая-то сортировка...
+
+
+function columnSort(a, b) {
+  return a - b;
+}
+
+
+var column = scoreboards.map(function(item) { 
+  return item.uptime;
+});
+
+console.log (column);
+
+console.log (column.sort(columnSort));
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
   
   /* for(var rowIdx = 0; rowIdx< 4; rowIdx++) {
     var row = document.createElement("tr");
