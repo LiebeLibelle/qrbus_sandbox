@@ -9,6 +9,7 @@ function ScoreboardView(model) {
     {columnName: "Температура", key: "temp"},
     {columnName: "Напряжение", key: "voltage"}
   ];
+  this.model.setCallback(this.render.bind(this));
 }
 
 ScoreboardView.drawTableHeader = function (template) {
@@ -16,7 +17,6 @@ ScoreboardView.drawTableHeader = function (template) {
   
   template.forEach(function(item) {
     var th = document.createElement("th");
-    // th.innerHTML = item.columnName;
     
     th.setAttribute("id", item.key);
     th.setAttribute("onclick", 'sortHandler("' + item.key + '")');
@@ -30,7 +30,6 @@ ScoreboardView.drawTableHeader = function (template) {
     thText.innerHTML = item.columnName;
     thButton.setAttribute("class", "div");
     thButton.setAttribute("style", "float:right;");
-    // thButton.innerHTML = "B";
     thDiv.appendChild(thText);
     thDiv.appendChild(thButton);
     
@@ -39,6 +38,7 @@ ScoreboardView.drawTableHeader = function (template) {
     
     orderAscending.setAttribute("class", "glyphicon glyphicon-chevron-up");
     orderDecending.setAttribute("class", "glyphicon glyphicon-chevron-down");
+    // orderDecending.style.visibility = "hidden";
     thButton.appendChild(orderAscending);
     thButton.appendChild(orderDecending);
     
@@ -73,6 +73,7 @@ ScoreboardView.drawTableBody = function(template, data) {
 }
 
 ScoreboardView.prototype.render = function () {
+  console.log("render/this:", this);
   console.log("render");
   document.body.innerHTML = "";
   
@@ -94,26 +95,33 @@ ScoreboardView.prototype.render = function () {
   var theaderRow = ScoreboardView.drawTableHeader(this.tableTemplate);
   theader.appendChild(theaderRow);
   
-  var tbody = ScoreboardView.drawTableBody(this.tableTemplate, this.model);
+  var tbody = ScoreboardView.drawTableBody(this.tableTemplate, this.model.data);
   table.appendChild(tbody);
 }
 
 /* ================= MODEL ============== */
-Model = Array;
-Model.prototype.flag = true;
 
-Model.prototype.emit = function (eventType, eventMessage) {
+function Model(initializationData){
+  this.data = initializationData.slice();
+} 
+
+Model.prototype.emit = function (eventType, eventMessage){ // 3 - событие обрабатывается (типы события могут быть разными)
   console.log("handle message", eventType);
-  switch(eventType) {
+  switch(eventType){
+    case"onLoad":
+      if(this.renderHandler != undefined){
+        this.renderHandler();
+      }
+    break;
     case "makeSort":
       var column = eventMessage;
       console.log("column", column, "has been sorted");
       
-      /* ===== BUSINESS LOGIC ====== */
-      if(this.column == undefined) {
+      /* ===== BUSINESS LOGIC ====== */ // 4 - работа с данными
+      if(this.column == undefined){
         orderAscending = false;
         console.log ("unsorted", this.column, orderAscending);
-      } else if(this.column == column) {
+      } else if(this.column == column){
         orderAscending = !this.orderAscending;
         console.log ("second click", this.column, orderAscending);
       } else {
@@ -124,34 +132,40 @@ Model.prototype.emit = function (eventType, eventMessage) {
       this.sortByColumn(column, orderAscending);
       this.column = column;
       this.orderAscending = orderAscending;
+      if(this.renderHandler != undefined){
+        this.renderHandler();
+      }
     break;
     default:
       console.warn("unhandled event", eventType);
   }
 }
 
-Model.prototype.sortByColumn = function(column, orderAscending) {
-  return this.sort(function(a, b) {
+Model.prototype.sortByColumn = function(column, orderAscending){
+  return this.data.sort(function(a, b){
     return (a[column] - b[column]) * (orderAscending ? -1 : 1); 
   });
 }
 
-var scoreboards = new Model(
+Model.prototype.setCallback = function(renderHandler){
+  this.renderHandler = renderHandler;
+}
+
+var scoreboards = new Model([
   {id: 1, name: "Проспект Просвещения", uptime: 134, temp: 23, voltage: 12.543},
   {id: 2, name: "Светлановская Площадь", uptime: 512, temp: 25, voltage: 13.089},
   {id: 3, name: "Метро \"Пионерская\"", uptime: 98, temp: 19, voltage: 12.991}
-);
+]);
 
-scoreboardView = new ScoreboardView(scoreboards);
+var scoreboardView = new ScoreboardView(scoreboards); // новый экземпляр Отображения >> VIEW >> и принимает ссылку на Mодель
 
-function sortHandler(column) {
+function sortHandler(column) { // 1 - обработчик события
   console.log("handle sort of column", column);
-  scoreboards.emit("makeSort", column);
-  scoreboardView.render();
+  scoreboards.emit("makeSort", column); // 2 - создается событие, отправляется в Модель >> MODEL
 }
 
-$(function() {
+$(function(){
   console.log("ready");
-  scoreboardView.render();
+  scoreboards.emit("onLoad");
 });
  
