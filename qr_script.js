@@ -16,9 +16,32 @@ ScoreboardView.drawTableHeader = function (template) {
   
   template.forEach(function(item) {
     var th = document.createElement("th");
-    th.innerHTML = item.columnName;
+    // th.innerHTML = item.columnName;
+    
     th.setAttribute("id", item.key);
     th.setAttribute("onclick", 'sortHandler("' + item.key + '")');
+    
+    var thDiv = document.createElement("div");
+    th.appendChild(thDiv);
+    
+    var thText = document.createElement("div");
+    var thButton = document.createElement("div");
+    thText.setAttribute("style", "float:left;");
+    thText.innerHTML = item.columnName;
+    thButton.setAttribute("class", "div");
+    thButton.setAttribute("style", "float:right;");
+    // thButton.innerHTML = "B";
+    thDiv.appendChild(thText);
+    thDiv.appendChild(thButton);
+    
+    var orderAscending = document.createElement("span");
+    var orderDecending = document.createElement("span");
+    
+    orderAscending.setAttribute("class", "glyphicon glyphicon-chevron-up");
+    orderDecending.setAttribute("class", "glyphicon glyphicon-chevron-down");
+    thButton.appendChild(orderAscending);
+    thButton.appendChild(orderDecending);
+    
     row.appendChild(th);
   });
   
